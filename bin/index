@@ -1,7 +1,9 @@
+#!/usr/bin/env node
+
 var tinify = require("tinify")
   , program = require('commander')
   , fs = require('fs')
-  , package = require('./package.json')
+  , package = require('../package.json')
   , filename = ''
   , base64image = require('base64-img')
   , ncp = require("copy-paste");

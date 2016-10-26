@@ -2,9 +2,15 @@
   "name": "stringify-img",
   "version": "0.0.1",
   "description": "Tinify & base64 image.",
-  "main": "index.js",
   "scripts": {},
   "preferGlobal": true,
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/zhoukekestar/stringify-img.git"
+  },
+  "bugs": {
+    "url": "https://github.com/zhoukekestar/stringify-img/issues"
+  },
   "keywords": [
     "tiny",
     "tinify",
@@ -13,7 +19,7 @@
     "img"
   ],
   "bin": {
-    "stringify-img": "index.js"
+    "stringify-img": "./bin/index"
   },
   "author": "zhoukekestar",
   "license": "MIT",
