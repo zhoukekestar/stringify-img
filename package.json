@@ -1,6 +1,6 @@
 {
   "name": "stringify-img",
-  "version": "0.0.3",
+  "version": "0.0.4",
   "description": "Tinify & base64 image.",
   "scripts": {},
   "preferGlobal": true,

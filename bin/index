@@ -3,14 +3,30 @@
 var tinify = require("tinify")
   , program = require('commander')
   , fs = require('fs')
-  , package = require('../package.json')
+  , configFile = process.env.HOME + '/.stringify-img/key.json'
+  , config = {}
   , filename = ''
   , base64image = require('base64-img')
   , ncp = require("copy-paste");
 
+if (!fs.existsSync(process.env.HOME + '/.stringify-img')) {
+  fs.mkdir(process.env.HOME + '/.stringify-img')
+}
+
+if (!fs.existsSync(configFile)) {
+  config = {}
+} else {
+  config = fs.readFileSync(configFile);
+  try {
+    config = JSON.parse(config);
+  } catch (e) {
+    config = {};
+  }
+}
+
 
 program
-  .version(package.version)
+  .version(require('../package.json').version)
   .option('-k, --key [your key]', 'Your API Key in https://tinypng.com')
   .option('-f, --file [file]', 'Your image file that want to tinify & base64.')
   .parse(process.argv);
@@ -21,9 +37,9 @@ if (program.key && program.file) {
   tinify.key = program.key;
   filename = program.file.replace(/(jpg|png)/, 'min.$1');
 
-  package.KEY = program.key;
-  fs.writeFileSync('./package.json', JSON.stringify(package, null, 2));
-  console.log('Key has been saved to package.json');
+  config.KEY = program.key;
+  fs.writeFileSync(configFile, JSON.stringify(config, null, 2));
+  console.log('Key has been saved to ' + configFile);
 
   tinify.fromFile(program.file).toFile(filename, function(err) {
     if (err) {
@@ -38,23 +54,28 @@ if (program.key && program.file) {
 
 } else if (program.key) {
 
-  package.KEY = program.key;
-  fs.writeFileSync('./package.json', JSON.stringify(package, null, 2));
-  console.log('Key has been saved to package.json');
+  config.KEY = program.key;
+  fs.writeFileSync(configFile, JSON.stringify(config, null, 2));
+  console.log('Key has been saved to ' + configFile);
 
 } else if (program.file) {
 
-  if (!package.KEY) {
+  if (!config.KEY) {
     console.warn('You have to set your key at first.')
     return;
   }
 
-  tinify.key = package.KEY;
+  tinify.key = config.KEY;
   filename = program.file.replace(/(jpg|png)/, 'min.$1');
 
   tinify.fromFile(program.file).toFile(filename, function(err) {
     if (err) {
-      console.log(err)
+      if (err instanceof tinify.AccountError) {
+        console.log("The error message is: " + err.message);
+      } else {
+        console.log(err)
+      }
+
     } else {
       ncp.copy(base64image.base64Sync(filename), function () {
         console.log('The base64 image has been copied to clipboard. And you have used tinypng %s times this month.', tinify.compressionCount);
